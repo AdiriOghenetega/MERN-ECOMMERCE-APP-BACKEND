@@ -31,7 +31,7 @@ require("./strategies/local")
 
 app.use(cookieParser())
 app.use(session({
-  store: MongoStore.create({ mongoUrl:'mongodb+srv://atdev:Mycollections1@cluster0.bz6rjbh.mongodb.net/user?retryWrites=true&w=majority'}),
+  store: MongoStore.create({ mongoUrl:process.env.MONGODB_URI}),
   secret: 'Jamesbond008',
   resave: false,
   saveUninitialized: false,
