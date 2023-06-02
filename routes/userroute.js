@@ -4,6 +4,7 @@ const {hashPassword}= require("../utils/helper")
 
 //import schema
 const userModel = require("../database/schemas/user");
+const cartModel = require("../database/schemas/cart")
 
 const router = Router()
 
@@ -11,7 +12,7 @@ const router = Router()
 //sign up
 router.post("/signup", async (req, res) => {
   
-    const { email,firstName,lastName,image } = req.body;
+    const { email,firstName,lastName,image,address } = req.body;
   
     const userExist = await userModel.findOne({ email: email });
    
@@ -24,6 +25,7 @@ router.post("/signup", async (req, res) => {
           password: passwordHash,
           firstName,
           lastName,
+          address,
           image
         });
         
@@ -37,11 +39,19 @@ router.post("/signup", async (req, res) => {
   router.post("/login",passport.authenticate('local'),async (req,res)=>{
     console.log("logged in")
     const {user} = req
+
+    //check for user's cartDB if user has existing cart
+    let cartDB = []
+    if(user.cart){
+      cartDB = await cartModel.findById(user.cart)
+    }
+    
     
     res.send({
       message: `Welcome ${user.firstName} Login is successfully`,
       alert: true,
       data:user,
+      cart:cartDB.cart ? cartDB.cart : []
     });
   })
   

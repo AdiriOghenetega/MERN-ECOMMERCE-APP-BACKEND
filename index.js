@@ -11,10 +11,12 @@ const userRouter = require("./routes/userroute")
 const productRouter = require("./routes/productsroutes")
 const paymentRouter = require("./routes/paymentroute")
 const cartRouter = require("./routes/cartroute")
+const orderRouter=require("./routes/orderroute")
+const paystackRouter=require("./routes/paystackPaymentroute")
 
 const app = express();
 app.use(cors({
-  origin: "http://localhost:3000",
+  origin: ["http://localhost:3000","https://checkout.paystack.com"],
   credentials:true
 }));
 app.use(express.json({ limit: "50mb" }));
@@ -53,7 +55,8 @@ app.use("",userRouter)
 app.use("",productRouter)
 app.use("",paymentRouter)
 app.use("",cartRouter)
-
+app.use("",orderRouter)
+app.use("",paystackRouter)
 
 //server is ruuning
 app.listen(PORT, () => console.log("server is running at port : " + PORT));

@@ -8,13 +8,17 @@ const userSchema =new mongoose.Schema({
       type: String,
       unique: true,
     },
+    address: String,
     password: String,
     confirmPassword: String,
     image: String,
-    cart:{
-      type:Array,
-      default:[]
-    }
+    role:{
+      type:String,
+      default:'user'
+    },
+    cart: mongoose.Schema.Types.ObjectId
+  },{
+    timestamps : true
   });
   
   //
