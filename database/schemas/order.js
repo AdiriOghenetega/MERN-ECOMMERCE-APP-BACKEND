@@ -9,7 +9,6 @@ var orderSchema = new mongoose.Schema({
     user:{
         type:mongoose.Schema.Types.ObjectId,
         required:true,
-        unique:true,
     },
     paymentMethod:{
         type:String,
@@ -22,7 +21,12 @@ var orderSchema = new mongoose.Schema({
     orderStatus:{
         type:String,
         required:true
-    }
+    },
+    transactionReference:{
+        type:String,
+        required:true
+    },
+    amount:Number
 }
 ,
 {

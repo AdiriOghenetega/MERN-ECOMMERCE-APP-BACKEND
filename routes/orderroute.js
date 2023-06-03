@@ -4,19 +4,28 @@ const orderModel = require("../database/schemas/order")
 
 const router = Router()
 
+router.get("/getorders",async(req,res)=>{
+//query db and return order list
+const orderList = await orderModel.find()
+//send orderList to client as response
+res.send(orderList)
+})
+
 router.post("/createorder",async(req,res)=>{
-    const {cart,user,method,payment_status,order_status}=req.body
-    if(cart && user && method && payment_status && order_status){
+    const {amount,userID,method,payment_status,order_status,reference}=req.body
+    if(amount && userID && method && payment_status && order_status){
         //check for user
-      const userExists = await userModel.findById(user?._id)
-      if(userExists){
+      const userExists = await userModel.findById(userID)
+      if(userExists){ 
         //create/store order in db
           const orderdb = await orderModel.create({
-            cart:cart.populate(),
-            user:user.populate(),
+            cart:userExists?.cart,
+            user:userExists,
             paymentMethod: method,
             paymentStatus:payment_status,
-            orderStatus:order_status
+            orderStatus:order_status,
+            transactionReference:reference,
+            amount
           })
           res.send(orderdb)
       }else{
