@@ -3,12 +3,13 @@ const mongoose = require('mongoose');
 // Declare the Schema of the Mongo model
 var orderSchema = new mongoose.Schema({
     cart:{
-        type: mongoose.Schema.Types.ObjectId,
+        type: Array,
         required:true,
     },
     user:{
         type:mongoose.Schema.Types.ObjectId,
         required:true,
+        ref:"user"
     },
     paymentMethod:{
         type:String,
@@ -26,7 +27,8 @@ var orderSchema = new mongoose.Schema({
         type:String,
         required:true
     },
-    amount:Number
+    amount:Number,
+    location: String
 }
 ,
 {
