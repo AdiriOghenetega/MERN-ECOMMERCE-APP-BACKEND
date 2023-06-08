@@ -1,5 +1,6 @@
 const {Router} = require("express")
 const passport = require("passport")
+const cloudinary = require('../utils/uploadImage');
 
 //import schema
 const productModel = require("../database/schemas/products");
@@ -11,15 +12,28 @@ const router = Router()
 //save product in data
 //api
 router.post("/uploadProduct", async (req, res) => {
- 
-  const exists = await productModel.findOne({name: req.body.name})
+  const {name,category,image,price,description,stores} = req.body
+  const exists = await productModel.findOne({name: name})
   if(exists){
     res.send({message : "Product Already Listed"})
   }else{
-    const data = await productModel(req.body);
-     await data.save();
-    res.send({ message: "Upload successfully" });
-  }
+    if(name && category && image && price && description && stores){
+
+      const imageUpload = await cloudinary.uploader.upload(image,{
+       folder:"Hcue"
+      })
+      const storeList = stores.map(item=>item.value)
+       const data = await productModel.create({
+         name,
+         category,
+         image: imageUpload.secure_url,
+         price,
+         description,
+         stores: storeList
+       });
+       res.send({ message: "Upload successfully" ,data});
+     }
+    }
   });
   
   //get product data
