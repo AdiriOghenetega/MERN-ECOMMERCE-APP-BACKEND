@@ -16,23 +16,8 @@ const handleSignUp = async (req, res) => {
       res.send({ message: "Email id is already registered", alert: false });
     } else {
       const passwordHash = hashPassword(req.body.password);
-      const imageUpload = async(image)=>{
-        const result = await cloudinary.uploader.upload(image, {
+      const imageUpload =image && await cloudinary.uploader.upload(image, {
           folder: "Hcue",timeout:60000
-        });
-        return result
-      } 
-  
-      asyncRetry(async () => {
-        const result = await imageUpload(image);
-        console.log(result);
-      }, {
-        retries: 3, // set number of retries
-        onRetry: (err, attempt) => {
-          console.log(`Retry attempt ${attempt} due to error: ${err}`);
-        } }
-      ).catch((err) => {
-          console.log(err);
         });
 
       await userModel.create({

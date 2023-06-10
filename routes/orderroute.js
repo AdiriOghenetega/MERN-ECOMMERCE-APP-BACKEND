@@ -3,7 +3,7 @@ const {handleGetOrders,handleCreateOrder,handleUpdateOrder,handleDeleteOne,handl
 
 const router = Router()
 
-router.get("/getorders/:id",handleGetOrders)
+router.get("/getorders",handleGetOrders)
 
 router.post("/createorder",handleCreateOrder)
 

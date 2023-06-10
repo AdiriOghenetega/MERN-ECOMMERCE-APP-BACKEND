@@ -17,47 +17,23 @@ const handleProductUpload = async (req, res) => {
         res.send({ message: "Product Already Listed" });
       } else {
         if (name && category && image && price && description && stores) {
-          let myImage = "";
   
-          const imageUpload = async (img) => {
-            const result = await cloudinary.uploader.upload(img, {
+          const imageUpload  = await cloudinary.uploader.upload(image, {
               folder: "Hcue",
               timeout: 60000,
             });
-            return result;
-          };
-  
-          asyncRetry(
-            async () => {
-              const result = await imageUpload(image);
-              myImage = result;
-            },
-            {
-              retries: 3, // set number of retries
-              onRetry: (err, attempt) => {
-                console.log(
-                  `Retry attempt ${attempt} due to error: ${err.error}`
-                );
-              },
-            }
-          ).catch((err) => {
-            console.log(err);
-          });
-          console.log(myImage, "myimage-hcue");
-          if (!Object.values(myImage)?.length) {
-            res.send({ message: "unable to upload image" });
-          } else {
+
             const storeList = stores.map((item) => item.value);
+
             const data = await productModel.create({
               name,
               category,
-              image: myImage?.secure_url,
+              image: imageUpload?.secure_url,
               price,
               description,
               stores: storeList,
             });
             res.send({ message: "Upload successfully", data });
-          }
         }
       } 
     }else{

@@ -4,21 +4,22 @@ const orderModel = require("../database/schemas/order")
 
 const handleGetOrders = async(req,res)=>{
     console.log("getting orders")
-    const {id} = req.params
+    
     try{
-    //find user with ID and check if user is an admin
-    const isAdmin = await userModel.findById(id)
-    if(isAdmin && (isAdmin.role.toLowerCase() === "admin")){
+    
 
       //query db and return order list
       const orderList = await orderModel.find().populate("user")
-      //send orderList to client as response
-      res.send({data : orderList})
-      console.log("orders sent")
+      console.log(orderList)
+      if(!orderList){
+        res.send({message:"No Orders listed"})
+      }else{
+        //send orderList to client as response
+        res.send({data : orderList})
+        console.log("orders sent")
 
-    }else{
-      res.send({message:"only admins can perform this action"})
-    }
+      }
+    
   }catch(error){
     console.log(error)
   }
