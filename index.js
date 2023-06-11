@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
-const dotenv = require("dotenv").config();
+require("dotenv").config();
 const cookieParser = require("cookie-parser")
 const session = require('express-session')
 const MongoStore = require('connect-mongo')
@@ -15,7 +15,7 @@ const paystackRouter=require("./routes/paystackPaymentroute")
 
 const app = express();
 app.use(cors({
-  origin: ["http://localhost:3000","https://checkout.paystack.com"],
+  origin: [process.env.FRONTEND_BASE_URL,"https://checkout.paystack.com"],
   credentials:true
 }));
 app.use(express.json({ limit: "50mb" }));
