@@ -6,18 +6,15 @@ const handleGetOrders = async(req,res)=>{
     console.log("getting orders")
     
     try{
-    
-
       //query db and return order list
       const orderList = await orderModel.find().populate("user")
-      console.log(orderList)
+     
       if(!orderList){
         res.send({message:"No Orders listed"})
       }else{
         //send orderList to client as response
         res.send({data : orderList})
         console.log("orders sent")
-
       }
     
   }catch(error){
@@ -85,7 +82,7 @@ const handleDeleteOne = async(req,res)=>{
     if(isAdmin && (isAdmin.role.toLowerCase() === "admin")){
       //find order with id and delete
      await orderModel.findByIdAndDelete(order_id)
-     //find orderdb and send
+     
    //find order Db and send
    const orderdb = await orderModel.find()
    res.send({data:orderdb})
