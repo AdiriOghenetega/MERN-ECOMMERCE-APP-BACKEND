@@ -1,5 +1,5 @@
 const cloudinary = require("../utils/uploadImage");
-const asyncRetry = require("async-retry");
+
 
 //import schema
 const productModel = require("../database/schemas/products");

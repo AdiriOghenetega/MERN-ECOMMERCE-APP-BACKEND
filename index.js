@@ -5,6 +5,7 @@ require("dotenv").config();
 const cookieParser = require("cookie-parser")
 const session = require('express-session')
 const MongoStore = require('connect-mongo')
+const flash = require('express-flash')
 
 const passport = require("passport")
 const userRouter = require("./routes/userroute")
@@ -30,7 +31,7 @@ require("./strategies/local")
 
 
 
-app.use(cookieParser())
+app.use(flash())
 app.use(session({
   store: MongoStore.create({ mongoUrl:process.env.MONGODB_URI}),
   secret: 'Jamesbond008',
@@ -38,6 +39,7 @@ app.use(session({
   saveUninitialized: false,
 }))
 
+app.use(cookieParser('Jamesbond008'))
 
 app.use(passport.initialize())
 app.use(passport.session())

@@ -9,7 +9,7 @@ router.post("/signup",handleSignUp);
 
 //api login
 
-router.post("/login",passport.authenticate("local"),handleLogin);
+router.post("/login",handleLogin);
 
 //check if user is logged in
 router.get("/user/:id",handleUserCheck);

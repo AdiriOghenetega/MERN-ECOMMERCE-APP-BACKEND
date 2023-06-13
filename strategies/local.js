@@ -29,14 +29,14 @@ passport.use(
             try{
               if(!email || !password) throw new Error("missing credentials")
               const userDB = await User.findOne({email})
-                          if(!userDB) throw new Error("user not found")
+                          if(!userDB) return done(null, false,{ message: 'No user with that email'} ); 
                           const isValidPass = comparePassword(password,userDB.password)
                           if(!isValidPass) {
                             console.log("authentication failed")
-                              done(null,null)
+                            return done(null, false, { message: 'Password incorrect' })
                           }else{
                               console.log("authentication successful")
-                              done(null,userDB)
+                              return done(null,userDB)
                           }
             } catch(err) {
                 console.log(err)
