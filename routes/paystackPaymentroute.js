@@ -4,6 +4,6 @@ const { handlePayment,handleVerifyTransaction } = require("../controllers/paysta
 const router = Router();
 
 router.get("/payment",handlePayment );
-router.get("verifypayment",handleVerifyTransaction)
+router.get("/verifypayment",handleVerifyTransaction)
 
 module.exports = router;
