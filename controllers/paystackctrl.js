@@ -60,7 +60,7 @@ const handlePayment = async (req, res) => {
 
 const handleVerifyTransaction = async (req,res)=>{
 console.log("verification called")
-  const {reference} = req.params
+  const {reference} = req.query
 
   console.log(reference)
 
