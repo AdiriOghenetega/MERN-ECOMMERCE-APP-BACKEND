@@ -58,5 +58,7 @@ app.use("",cartRouter)
 app.use("",orderRouter)
 app.use("",paystackRouter)
 
+app.use(timeout(10000));
+
 //server is ruuning
 app.listen(PORT, () => console.log("server is running at port : " + PORT));
