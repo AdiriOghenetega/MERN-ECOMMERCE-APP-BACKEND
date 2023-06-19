@@ -31,7 +31,7 @@ require("./strategies/local")
 
 
 
-app.use(timeout(10000));
+app.use(timeout("10s"));
 app.use(session({
   store: MongoStore.create({ mongoUrl:process.env.MONGODB_URI}),
   secret: 'Jamesbond008',
