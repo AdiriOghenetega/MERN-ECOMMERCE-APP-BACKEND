@@ -16,7 +16,7 @@ const paystackRouter=require("./routes/paystackPaymentroute")
 
 const app = express();
 app.use(cors({
-  origin: [process.env.FRONTEND_BASE_URL,"https://checkout.paystack.com","http://172.20.10.9:19000"],
+  origin: [process.env.FRONTEND_BASE_URL,"https://api.paystack.co","http://172.20.10.9:19000"],
   credentials:true
 }));
 app.use(express.json({ limit: "50mb" }));

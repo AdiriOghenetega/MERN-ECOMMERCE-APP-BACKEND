@@ -62,6 +62,8 @@ const handleVerifyTransaction = async (req,res)=>{
 console.log("verification called")
   const {reference} = req.params
 
+  console.log(reference)
+
 const options = {
   hostname: 'api.paystack.co',
   port: 443,
