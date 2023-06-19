@@ -52,7 +52,7 @@ const handleCreateOrder = async(req,res)=>{
    }
 }
 
-const handleUpdateOrder = async(req,res)=>{
+const handleUpdateOrderStatus = async(req,res)=>{
     console.log("update order called")
   const {orderStatus}=req.body
   const {user_id,order_id} = req.query
@@ -73,6 +73,8 @@ const handleUpdateOrder = async(req,res)=>{
     console.log(error)
   }
   }
+
+
 
 const handleDeleteOne = async(req,res)=>{
     const {user_id,order_id} = req.query
@@ -112,4 +114,4 @@ const handleDeleteAll = async(req,res)=>{
         console.log(error)
     }
   }
-module.exports = {handleGetOrders,handleCreateOrder,handleUpdateOrder,handleDeleteOne,handleDeleteAll}
+module.exports = {handleGetOrders,handleCreateOrder,handleUpdateOrderStatus,handleDeleteOne,handleDeleteAll}

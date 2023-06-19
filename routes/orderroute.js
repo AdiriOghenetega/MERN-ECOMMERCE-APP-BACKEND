@@ -1,5 +1,5 @@
 const {Router}=require("express")
-const {handleGetOrders,handleCreateOrder,handleUpdateOrder,handleDeleteOne,handleDeleteAll} = require("../controllers/orderctrl")
+const {handleGetOrders,handleCreateOrder,handleUpdateOrderStatus,handleDeleteOne,handleDeleteAll} = require("../controllers/orderctrl")
 
 const router = Router()
 
@@ -7,7 +7,7 @@ router.get("/getorders",handleGetOrders)
 
 router.post("/createorder",handleCreateOrder)
 
-router.put("/updateorder",handleUpdateOrder)
+router.put("/updateorder",handleUpdateOrderStatus)
 
 router.delete("/deleteone",handleDeleteOne)
 

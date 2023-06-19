@@ -58,4 +58,34 @@ const handlePayment = async (req, res) => {
   }
 };
 
-module.exports = { handlePayment };
+const handleVerifyTransaction = async (req,res)=>{
+
+  const {reference} = req.params
+
+const options = {
+  hostname: 'api.paystack.co',
+  port: 443,
+  path: `/transaction/verify/${reference}`,
+  method: 'GET',
+  headers: {
+    Authorization: `Bearer ${process.env.PAY_STACK_SECRET_KEY}`
+  }
+}
+
+https.request(options, resPaystack => {
+  let data = ''
+
+  resPaystack.on('data', (chunk) => {
+    data += chunk
+  });
+
+  resPaystack.on('end', () => {
+    console.log(JSON.parse(data))
+    res.send(JSON.parse(data))
+  })
+}).on('error', error => {
+  console.error(error)
+})
+}
+
+module.exports = { handlePayment,handleVerifyTransaction };
