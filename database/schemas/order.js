@@ -6,9 +6,13 @@ var orderSchema = new mongoose.Schema({
         type: Array,
         required:true,
     },
+    userType: String,
+    guest:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"guest"
+    },
     user:{
         type:mongoose.Schema.Types.ObjectId,
-        required:true,
         ref:"user"
     },
     paymentMethod:{
@@ -28,7 +32,8 @@ var orderSchema = new mongoose.Schema({
         required:true
     },
     amount:Number,
-    location: String
+    location: String,
+    address : String
 }
 ,
 {

@@ -8,7 +8,7 @@ const userModel = require("../database/schemas/user");
 const cartModel = require("../database/schemas/cart");
 
 const handleSignUp = async (req, res) => {
-  const { email, firstName, lastName, image, address } = req.body;
+  const { email, firstName, lastName, image, address,mobile } = req.body;
   try {
     const userExist = await userModel.findOne({ email: email });
 
@@ -25,6 +25,7 @@ const handleSignUp = async (req, res) => {
 
       await userModel.create({
         email,
+        mobile,
         password: passwordHash,
         firstName,
         lastName,

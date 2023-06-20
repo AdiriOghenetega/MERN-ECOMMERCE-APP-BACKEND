@@ -5,7 +5,6 @@ require("dotenv").config();
 const cookieParser = require("cookie-parser")
 const session = require('express-session')
 const MongoStore = require('connect-mongo')
-const timeout = require('connect-timeout')
 
 const passport = require("passport")
 const userRouter = require("./routes/userroute")
@@ -31,7 +30,6 @@ require("./strategies/local")
 
 
 
-app.use(timeout("10s"));
 app.use(session({
   store: MongoStore.create({ mongoUrl:process.env.MONGODB_URI}),
   secret: 'Jamesbond008',

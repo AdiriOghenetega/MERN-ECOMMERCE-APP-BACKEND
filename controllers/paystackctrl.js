@@ -7,18 +7,12 @@ const cartModel = require("../database/schemas/cart");
 const handlePayment = async (req, res) => {
   console.log("payment api called");
 
-  const { id, amount } = req.query;
-  console.log(id, amount);
+  const { amount,email } = req.query;
+  console.log(email,amount);
   try {
-    //check for user
-    const userDB = await userModel.findById(id);
-    //check for cart if user exists
-    if (userDB) {
-      const cartDB = await cartModel.findById(userDB.cart);
-      //if cartDB exists and has length greater than zero ,use info from cart and user to give info to payment gateway
-      if (cartDB && cartDB?.cart?.length > 0) {
+    
         const params = JSON.stringify({
-          email: userDB?.email,
+          email: email,
           amount: amount * 100,
         });
 
@@ -51,8 +45,8 @@ const handlePayment = async (req, res) => {
 
         reqPaystack.write(params);
         reqPaystack.end();
-      }
-    }
+      
+    
   } catch (error) {
     console.log(error);
   }
