@@ -129,6 +129,37 @@ const handleUpdateOrderStatus = async(req,res)=>{
   }
 
 
+  const handleOrderPaymentStatus = async (req, res) => {
+    console.log("update order payment called");
+    const { paymentStatus } = req.body;
+    const { transactionReference } = req.query;
+   
+    try {
+      if(transactionReference) {
+        orderModel.updateOne({transactionReference: transactionReference}, 
+          {paymentStatus:paymentStatus}, function (err, docs) {
+          if (err){
+              console.log(err)
+          }
+          else{
+              console.log("Updated Docs : ", docs);
+          }
+      });
+  
+        //find order Db
+        const orderdb = await orderModel.find();
+        res.send({ data: orderdb });
+        console.log("updated order sent");
+      } else {
+        res.send({ message: "transaction reference not recognised" });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  
+
+
 
 const handleDeleteOne = async(req,res)=>{
     const {user_id,order_id} = req.query
@@ -178,4 +209,4 @@ const handleDeleteAll = async(req,res)=>{
         console.log(error)
     }
   }
-module.exports = {handleGetOrders,handleCreateOrder,handleUpdateOrderStatus,handleDeleteOne,handleDeleteAll}
+module.exports = {handleGetOrders,handleCreateOrder,handleUpdateOrderStatus,handleDeleteOne,handleDeleteAll,handleOrderPaymentStatus}
