@@ -2,13 +2,12 @@ const passport = require("passport");
 const { hashPassword } = require("../utils/helper");
 const cloudinary = require("../utils/uploadImage");
 
-
 //import schema
 const userModel = require("../database/schemas/user");
 const cartModel = require("../database/schemas/cart");
 
 const handleSignUp = async (req, res) => {
-  const { email, firstName, lastName, image, address,mobile } = req.body;
+  const { email, firstName, lastName, image, address, mobile } = req.body;
   try {
     const userExist = await userModel.findOne({ email: email });
 
@@ -41,9 +40,9 @@ const handleSignUp = async (req, res) => {
 };
 
 const handleMobileSignUp = async (req, res) => {
-  console.log("handle mobile signup called")
-  
-  const { email, firstName, lastName, image, address,mobile } = req.body;
+  console.log("handle mobile signup called");
+
+  const { email, firstName, lastName, image, address, mobile } = req.body;
   try {
     const userExist = await userModel.findOne({ email: email });
 
@@ -58,6 +57,8 @@ const handleMobileSignUp = async (req, res) => {
           timeout: 60000,
         }));
 
+        console.log(imageUpload)
+
       await userModel.create({
         email,
         mobile,
@@ -65,7 +66,7 @@ const handleMobileSignUp = async (req, res) => {
         firstName,
         lastName,
         address,
-        image: imageUpload?.secure_url,
+        image: imageUpload?.url,
       });
 
       res.send({ message: "Sign-up Successfully", alert: true });
@@ -77,7 +78,6 @@ const handleMobileSignUp = async (req, res) => {
 
 const handleLogin = async (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
-    
     if (err) res.send({ message: err });
     if (!user) res.send({ message: info?.message });
     else {
