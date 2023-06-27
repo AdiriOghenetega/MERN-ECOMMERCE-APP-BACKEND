@@ -66,7 +66,7 @@ const handleMobileSignUp = async (req, res) => {
         firstName,
         lastName,
         address,
-        image: imageUpload?.url,
+        image: imageUpload,
       });
 
       res.send({ message: "Sign-up Successfully", alert: true });
