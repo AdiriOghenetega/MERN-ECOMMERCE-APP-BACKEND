@@ -4,11 +4,24 @@ const {handleSignUp,handleMobileSignUp,handleLogin,handleUserCheck,handleChangeR
 
 const router = Router();
 
+const multer = require('multer');
+
+const storage = multer.diskStorage({});
+
+const fileFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith('image')) {
+    cb(null, true);
+  } else {
+    cb('invalid image file!', false);
+  }
+};
+const uploads = multer({ storage, fileFilter });
+
 //sign up
 router.post("/signup",handleSignUp);
 
 //mobile app sign up
-router.post("/mobilesignup",handleMobileSignUp);
+router.post("/mobilesignup",uploads.single('image'),handleMobileSignUp);
 
 //api login
 router.post("/login",handleLogin);
