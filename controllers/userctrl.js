@@ -52,9 +52,11 @@ const handleMobileSignUp = async (req, res) => {
       const passwordHash = hashPassword(req.body.password);
       const imageUpload =
         image &&
-        (await cloudinary.uploader.upload(req.file.path, {
-          folder: "Hcue",
-          timeout: 60000,
+        ( await cloudinary.uploader.upload(req.file.path, {
+          public_id: `${firstName}_profile`,
+          width: 500,
+          height: 500,
+          crop: 'fill',
         }));
 
         console.log(imageUpload)
@@ -66,7 +68,7 @@ const handleMobileSignUp = async (req, res) => {
         firstName,
         lastName,
         address,
-        image: imageUpload,
+        
       });
 
       res.send({ message: "Sign-up Successfully", alert: true });
