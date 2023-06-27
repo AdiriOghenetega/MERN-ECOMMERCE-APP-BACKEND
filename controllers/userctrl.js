@@ -41,7 +41,7 @@ const handleSignUp = async (req, res) => {
 
 const handleMobileSignUp = async (req, res) => {
   console.log("handle mobile signup called");
-
+console.log(req.file)
   const { email, firstName, lastName, image, address, mobile } = req.body;
   try {
     const userExist = await userModel.findOne({ email: email });
@@ -52,11 +52,9 @@ const handleMobileSignUp = async (req, res) => {
       const passwordHash = hashPassword(req.body.password);
       const imageUpload =
         image &&
-        ( await cloudinary.uploader.upload(req.file.path, {
-          public_id: `${firstName}_profile`,
-          width: 500,
-          height: 500,
-          crop: 'fill',
+        (await cloudinary.uploader.upload(req.file, {
+          folder: "Hcue",
+          timeout: 60000,
         }));
 
         console.log(imageUpload)
