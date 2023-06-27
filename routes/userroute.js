@@ -1,14 +1,16 @@
 const { Router } = require("express");
 const passport = require("passport");
-const {handleSignUp,handleLogin,handleUserCheck,handleChangeRole} = require("../controllers/userctrl")
+const {handleSignUp,handleMobileSignUp,handleLogin,handleUserCheck,handleChangeRole} = require("../controllers/userctrl")
 
 const router = Router();
 
 //sign up
 router.post("/signup",handleSignUp);
 
-//api login
+//mobile app sign up
+router.post("/mobilesignup",handleMobileSignUp);
 
+//api login
 router.post("/login",handleLogin);
 
 //check if user is logged in

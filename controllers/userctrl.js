@@ -40,6 +40,40 @@ const handleSignUp = async (req, res) => {
   }
 };
 
+const handleMobileSignUp = async (req, res) => {
+  console.log(req.body)
+  const { email, firstName, lastName, image, address,mobile } = req.body;
+  try {
+    const userExist = await userModel.findOne({ email: email });
+
+    if (userExist) {
+      res.send({ message: "Email id is already registered", alert: false });
+    } else {
+      const passwordHash = hashPassword(req.body.password);
+      const imageUpload =
+        image &&
+        (await cloudinary.uploader.upload(image, {
+          folder: "Hcue",
+          timeout: 60000,
+        }));
+
+      await userModel.create({
+        email,
+        mobile,
+        password: passwordHash,
+        firstName,
+        lastName,
+        address,
+        image: imageUpload?.secure_url,
+      });
+
+      res.send({ message: "Sign-up Successfully", alert: true });
+    }
+  } catch (error) {
+    console.error("Error occurred: ", error);
+  }
+};
+
 const handleLogin = async (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
     
@@ -106,6 +140,7 @@ const handleChangeRole = async (req, res) => {
 
 module.exports = {
   handleSignUp,
+  handleMobileSignUp,
   handleLogin,
   handleUserCheck,
   handleChangeRole,
