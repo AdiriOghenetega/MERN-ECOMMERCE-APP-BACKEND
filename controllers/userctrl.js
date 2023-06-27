@@ -44,6 +44,7 @@ const handleMobileSignUp = async (req, res) => {
   console.log("handle mobile signup called")
   console.log(req.body)
   console.log(req)
+  console.log(req.file)
   const { email, firstName, lastName, image, address,mobile } = req.body;
   try {
     const userExist = await userModel.findOne({ email: email });
