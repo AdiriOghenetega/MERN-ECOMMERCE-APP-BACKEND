@@ -1,21 +1,8 @@
 const { Router } = require("express");
-const passport = require("passport");
 const {handleSignUp,handleMobileSignUp,handleLogin,handleUserCheck,handleChangeRole} = require("../controllers/userctrl")
+const uploads = require("../utils/multer")
 
 const router = Router();
-
-const multer = require('multer');
-
-const storage = multer.diskStorage({});
-
-const fileFilter = (req, file, cb) => {
-  if (file.mimetype.startsWith('image')) {
-    cb(null, true);
-  } else {
-    cb('invalid image file!', false);
-  }
-};
-const uploads = multer({ storage, fileFilter });
 
 //sign up
 router.post("/signup",handleSignUp);
