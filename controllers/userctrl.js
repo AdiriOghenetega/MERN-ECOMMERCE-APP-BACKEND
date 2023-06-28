@@ -42,7 +42,7 @@ const handleSignUp = async (req, res) => {
 const handleMobileSignUp = async (req, res) => {
   console.log("handle mobile signup called");
 console.log(req.file)
-  const { email, firstName, lastName, image, address, mobile } = req.body;
+  const { email, firstName, lastName, address, mobile } = req.body;
   try {
     const userExist = await userModel.findOne({ email: email });
 
@@ -51,13 +51,11 @@ console.log(req.file)
     } else {
       const passwordHash = hashPassword(req.body.password);
       const imageUpload =
-        image &&
-        (await cloudinary.uploader.upload(req.file, {
+        req.file &&
+        (await cloudinary.uploader.upload(req.file.path, {
           folder: "Hcue",
           timeout: 60000,
         }));
-
-        console.log(imageUpload)
 
       await userModel.create({
         email,
@@ -66,7 +64,7 @@ console.log(req.file)
         firstName,
         lastName,
         address,
-        
+        image:imageUpload?.url
       });
 
       res.send({ message: "Sign-up Successfully", alert: true });
