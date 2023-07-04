@@ -1,9 +1,11 @@
 const {Router}=require("express")
-const {handleGetOrders,handleCreateOrder,handleUpdateOrderStatus,handleOrderPaymentStatus,handleDeleteOne,handleDeleteAll} = require("../controllers/orderctrl")
+const {handleGetOrders,handleGetClientOrders,handleCreateOrder,handleUpdateOrderStatus,handleOrderPaymentStatus,handleDeleteOne,handleDeleteAll} = require("../controllers/orderctrl")
 
 const router = Router()
 
 router.get("/getorders",handleGetOrders)
+
+router.get("/getclientorders",handleGetClientOrders)
 
 router.post("/createorder",handleCreateOrder)
 

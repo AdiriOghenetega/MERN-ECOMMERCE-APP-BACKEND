@@ -23,11 +23,31 @@ const handleGetOrders = async(req,res)=>{
   }
   }
 
+const handleGetClientOrders = async(req,res)=>{
+    console.log("getting orders")
+    const {email}=req.query
+    try{
+      //query db and return order list
+      const orderList = await orderModel.find({email:email}).populate("user").populate("guest")
+     
+      if(!orderList){
+        res.send({message:"No Orders listed"})
+      }else{
+        //send orderList to client as response
+        res.send({data : orderList})
+        console.log("orders sent")
+      }
+    
+  }catch(error){
+    console.log(error)
+  }
+  }
+
 const handleCreateOrder = async(req,res)=>{
-    const {amount,userID,userType,guest,method,payment_status,order_status,reference,cartData,location}=req.body
+    const {amount,userID,userType,guest,method,payment_status,order_status,reference,cartData,location,deliveryLocation,email}=req.body
    try{
     if(userType === "registered"){
-      if(amount && userID && method && payment_status && order_status && cartData && reference && location ){
+      if(amount && userID && method && payment_status && order_status && cartData && reference && location && deliveryLocation && email){
           //check for user
         const userExists = await userModel.findById(userID)
         if(userExists){ 
@@ -40,9 +60,14 @@ const handleCreateOrder = async(req,res)=>{
               transactionReference:reference,
               amount,
               cart:cartData,
-              location
+              location,
+              deliveryLocation,
+              email
             })
-            res.send(orderdb)
+
+            //find current client's order and send together with current orderDB as res
+            const clientOrderDb = await orderModel.find({email:email}).populate("user")
+            res.send({orderList:clientOrderDb,currentOrder:orderdb})
         }else{
           res.send({message:"user does not exist"})
         }
@@ -51,7 +76,7 @@ const handleCreateOrder = async(req,res)=>{
       }
 
     }else if(userType === "guest"){
-      if(amount && guest && method && payment_status && order_status && cartData && reference && location){
+      if(amount && guest && method && payment_status && order_status && cartData && reference && location && deliveryLocation){
         //check for guest
       const guestExists = await guestModel.findOne({email: guest.email})
       if(guestExists){ 
@@ -64,9 +89,13 @@ const handleCreateOrder = async(req,res)=>{
             transactionReference:reference,
             amount,
             cart:cartData,
-            location
+            location,
+            deliveryLocation,
+            email:guest.email
           })
-          res.send(orderdb)
+          //find current client's order and send together with current orderDB as res
+          const clientOrderDb = await orderModel.find({email:guest.email}).populate("guest")
+          res.send({orderList:clientOrderDb,currentOrder:orderdb})
       }else{
         //create guest in db
         const {firstName,lastName,email,mobile,address} = guest
@@ -88,9 +117,13 @@ const handleCreateOrder = async(req,res)=>{
           amount,
           cart:cartData,
           location,
-          address:address
+          address:address,
+          deliveryLocation,
+          email:guest.email
         })
-        res.send(orderdb)
+        //find current client's order and send together with current orderDB as res
+        const clientOrderDb = await orderModel.find({email:guest.email}).populate("guest")
+        res.send({orderList:clientOrderDb,currentOrder:orderdb})
       }
     }else{
         res.send({message:"incomplete required details"})
@@ -209,4 +242,4 @@ const handleDeleteAll = async(req,res)=>{
         console.log(error)
     }
   }
-module.exports = {handleGetOrders,handleCreateOrder,handleUpdateOrderStatus,handleDeleteOne,handleDeleteAll,handleOrderPaymentStatus}
+module.exports = {handleGetOrders,handleGetClientOrders,handleCreateOrder,handleUpdateOrderStatus,handleDeleteOne,handleDeleteAll,handleOrderPaymentStatus}

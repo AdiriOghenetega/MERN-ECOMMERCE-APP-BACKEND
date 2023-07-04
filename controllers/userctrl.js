@@ -5,6 +5,7 @@ const cloudinary = require("../utils/uploadImage");
 //import schema
 const userModel = require("../database/schemas/user");
 const cartModel = require("../database/schemas/cart");
+const orderModel = require("../database/schemas/order")
 
 const handleSignUp = async (req, res) => {
   const { email, firstName, lastName, image, address, mobile } = req.body;
@@ -87,11 +88,15 @@ const handleLogin = async (req, res, next) => {
           if (user.cart) {
             cartDB = await cartModel.findById(user.cart);
           }
+        //check for user's order data,if any exists , send by res
+       const orderDB = await orderModel.find({email:user.email})
+
           res.send({
             message: `Welcome ${user.firstName} Login is successfully`,
             alert: true,
             data: user,
             cart: cartDB.cart ? cartDB.cart : [],
+            orderList: orderDB ? orderDB:[]
           });
         } catch (error) {
           console.log(error);

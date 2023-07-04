@@ -33,7 +33,9 @@ var orderSchema = new mongoose.Schema({
     },
     amount:Number,
     location: String,
-    address : String
+    deliveryLocation:Object,
+    address : String,
+    email:String
 }
 ,
 {
