@@ -1,3 +1,5 @@
+const cloudinary = require("../utils/uploadImage");
+
 //import schemas
 const userModel = require("../database/schemas/user")
 const orderModel = require("../database/schemas/order")
@@ -44,10 +46,10 @@ const handleGetClientOrders = async(req,res)=>{
   }
 
 const handleCreateOrder = async(req,res)=>{
-    const {amount,userID,userType,guest,method,payment_status,order_status,reference,cartData,location,deliveryLocation,email}=req.body
+    const {amount,userID,userType,guest,method,payment_status,order_status,reference,cartData,location,deliveryLocation,email,vat,subTotal,deliveryCharge}=req.body
    try{
     if(userType === "registered"){
-      if(amount && userID && method && payment_status && order_status && cartData && reference && location && deliveryLocation && email){
+      if(amount && userID && method && payment_status && order_status && cartData && reference && location && deliveryLocation && email && vat && subTotal && deliveryCharge){
           //check for user
         const userExists = await userModel.findById(userID)
         if(userExists){ 
@@ -62,7 +64,10 @@ const handleCreateOrder = async(req,res)=>{
               cart:cartData,
               location,
               deliveryLocation,
-              email
+              email,
+              vat,
+              subTotal,
+              deliveryCharge
             })
 
             //find current client's order and send together with current orderDB as res
@@ -76,7 +81,7 @@ const handleCreateOrder = async(req,res)=>{
       }
 
     }else if(userType === "guest"){
-      if(amount && guest && method && payment_status && order_status && cartData && reference && location && deliveryLocation){
+      if(amount && guest && method && payment_status && order_status && cartData && reference && location && deliveryLocation && vat && subTotal && deliveryCharge){
         //check for guest
       const guestExists = await guestModel.findOne({email: guest.email})
       if(guestExists){ 
@@ -91,7 +96,10 @@ const handleCreateOrder = async(req,res)=>{
             cart:cartData,
             location,
             deliveryLocation,
-            email:guest.email
+            email:guest.email,
+            vat,
+              subTotal,
+              deliveryCharge
           })
           //find current client's order and send together with current orderDB as res
           const clientOrderDb = await orderModel.find({email:guest.email}).populate("guest")
@@ -119,7 +127,10 @@ const handleCreateOrder = async(req,res)=>{
           location,
           address:address,
           deliveryLocation,
-          email:guest.email
+          email:guest.email,
+          vat,
+              subTotal,
+              deliveryCharge
         })
         //find current client's order and send together with current orderDB as res
         const clientOrderDb = await orderModel.find({email:guest.email}).populate("guest")
@@ -161,6 +172,39 @@ const handleUpdateOrderStatus = async(req,res)=>{
   }
   }
 
+  const initiateDelivery = async(req,res)=>{
+    console.log("initiate order delivery called")
+  const {riderDetails}=req.body
+  const {name,mobile,image}=riderDetails
+  const {user_id,order_id} = req.query
+  try{
+    if(user_id && order_id){
+      //find user with ID and check if user is an admin
+      const isAdmin = await userModel.findById(user_id)
+      if(isAdmin && (isAdmin.role.toLowerCase() === "admin")){
+        const imageUpload =
+        image &&
+        (await cloudinary.uploader.upload(image, {
+          folder: "Hcue",
+          timeout: 60000,
+        }));
+        //find order with id and update status
+       await orderModel.findByIdAndUpdate(order_id,{rider: {name,mobile,image:imageUpload?.secure_url},orderStatus:"delivering"},{new:true})
+        //find order Db
+        const orderdb = await orderModel.find()
+        res.send({data:orderdb})
+        console.log("updated order sent")
+      }else{
+        res.send({message:"only admins can perform this action"})
+      }
+
+    }else{
+      res.send({message:"only admins can perform this action"})
+    }
+  }catch(error){
+    console.log(error)
+  }
+  }
 
   const handleOrderPaymentStatus = async (req, res) => {
     console.log("update order payment called");
@@ -242,4 +286,4 @@ const handleDeleteAll = async(req,res)=>{
         console.log(error)
     }
   }
-module.exports = {handleGetOrders,handleGetClientOrders,handleCreateOrder,handleUpdateOrderStatus,handleDeleteOne,handleDeleteAll,handleOrderPaymentStatus}
+module.exports = {handleGetOrders,handleGetClientOrders,handleCreateOrder,handleUpdateOrderStatus,handleDeleteOne,handleDeleteAll,handleOrderPaymentStatus,initiateDelivery}

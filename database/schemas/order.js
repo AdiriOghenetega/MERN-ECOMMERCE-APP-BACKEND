@@ -31,6 +31,13 @@ var orderSchema = new mongoose.Schema({
         type:String,
         required:true
     },
+    rider:{
+        type:Object,
+        default:{}
+    },
+    vat:String,
+    subTotal:String,
+    deliveryCharge:String,
     amount:Number,
     location: String,
     deliveryLocation:Object,
