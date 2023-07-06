@@ -42,7 +42,8 @@ var orderSchema = new mongoose.Schema({
     location: String,
     deliveryLocation:Object,
     address : String,
-    email:String
+    email:String,
+    expoPushToken:String
 }
 ,
 {
