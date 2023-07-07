@@ -13,6 +13,7 @@ const cartRouter = require("./routes/cartroute")
 const orderRouter=require("./routes/orderroute")
 const paystackRouter=require("./routes/paystackPaymentroute")
 const bannerRouter = require("./routes/bannerroute")
+const riderRouter = require("./routes/riderroute")
 
 const app = express();
 app.use(cors({
@@ -57,6 +58,7 @@ app.use("",cartRouter)
 app.use("",orderRouter)
 app.use("",paystackRouter)
 app.use("",bannerRouter)
+app.use("",riderRouter)
 
 
 //server is ruuning

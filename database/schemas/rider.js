@@ -10,6 +10,7 @@ var riderSchema = new mongoose.Schema({
     mobile:{
         type:String,
         required:true,
+        index:true,
     },
    image:{
         type:String,

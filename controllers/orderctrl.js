@@ -1,11 +1,11 @@
 const cloudinary = require("../utils/uploadImage");
-const {sendPushNotification} = require("../utils/expo")
+const { sendPushNotification } = require("../utils/expo");
 
 //import schemas
 const userModel = require("../database/schemas/user");
 const orderModel = require("../database/schemas/order");
 const guestModel = require("../database/schemas/guest");
-const riderModel = require("../database/schemas/rider")
+const riderModel = require("../database/schemas/rider");
 
 const handleGetOrders = async (req, res) => {
   console.log("getting orders");
@@ -221,11 +221,16 @@ const handleUpdateOrderStatus = async (req, res) => {
           { new: true }
         );
         //find order with id and retrieve expoPushToken
-        const clientOrder = await orderModel.findById(order_id)
-        const expoPushToken = clientOrder.expoPushToken
-        const clientOrderStatus = clientOrder.orderStatus
+        const clientOrder = await orderModel.findById(order_id);
+        const expoPushToken = clientOrder.expoPushToken;
+        const clientOrderStatus = clientOrder.orderStatus;
         //now send push notification to client
-        sendPushNotification([expoPushToken],"Order Delivered. click to monitor order in app",clientOrderStatus,"OrderList")
+        sendPushNotification(
+          [expoPushToken],
+          "Order Delivered. click to monitor order in app",
+          clientOrderStatus,
+          "OrderList"
+        );
         //find order Db
         const orderdb = await orderModel.find();
         res.send({ data: orderdb });
@@ -252,39 +257,52 @@ const initiateDelivery = async (req, res) => {
       const isAdmin = await userModel.findById(user_id);
       if (isAdmin && isAdmin.role.toLowerCase() === "admin") {
         //check if rider already exists
-        const riderExists = await riderModel.find({mobile})
-        let imageUpload ={}
-        if(!riderExists){
-           imageUpload =
-          image &&
-          (await cloudinary.uploader.upload(image, {
-            folder: "Hcue",
-            timeout: 60000,
-          }));
+        const riderExists = await riderModel.findOne({
+          mobile: mobile.toString(),
+        });
+        let imageUpload = {};
+        if (riderExists?.mobile) {
+          imageUpload = image;
+        } else {
+          imageUpload =
+            image &&
+            (await cloudinary.uploader.upload(image, {
+              folder: "Hcue",
+              timeout: 60000,
+            }));
 
-          await riderModel.create({
+          const newRider = await riderModel.create({
             name,
             mobile,
-            image: imageUpload?.secure_url
-          })
+            image: imageUpload?.secure_url,
+          });
+          console.log("created new rider", newRider);
         }
-        
         //find order with id and update status
         await orderModel.findByIdAndUpdate(
           order_id,
           {
-            rider: { name, mobile, image: riderExists ? image:imageUpload?.secure_url },
+            rider: {
+              name,
+              mobile,
+              image: riderExists ? image : imageUpload?.secure_url,
+            },
             orderStatus: "delivering",
           },
           { new: true }
         );
         //find order with id and retrieve expoPushToken
-        const clientOrder = await orderModel.findById(order_id)
-        const expoPushToken = clientOrder.expoPushToken
-        const clientOrderStatus = clientOrder.orderStatus
+        const clientOrder = await orderModel.findById(order_id);
+        const expoPushToken = clientOrder.expoPushToken;
+        const clientOrderStatus = clientOrder.orderStatus;
         //now send push notification to client
-        sendPushNotification([expoPushToken],"Order Sent,Delivery in progress. click to monitor order in app",clientOrderStatus,"OrderList")
-                
+        sendPushNotification(
+          [expoPushToken],
+          "Order Sent,Delivery in progress. click to monitor order in app",
+          clientOrderStatus,
+          "OrderList"
+        );
+
         //find order Db
         const orderdb = await orderModel.find();
         res.send({ data: orderdb });
