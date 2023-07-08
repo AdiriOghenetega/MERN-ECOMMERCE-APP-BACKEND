@@ -70,6 +70,7 @@ const handleCreateOrder = async (req, res) => {
     deliveryCharge,
     expoPushToken,
   } = req.body;
+ 
   try {
     if (userType === "registered") {
       if (
@@ -85,9 +86,9 @@ const handleCreateOrder = async (req, res) => {
         email &&
         vat &&
         subTotal &&
-        deliveryCharge &&
-        expoPushToken
+        deliveryCharge 
       ) {
+        console.log("create order called")
         //check for user
         const userExists = await userModel.findById(userID);
         if (userExists) {
@@ -113,6 +114,7 @@ const handleCreateOrder = async (req, res) => {
           const clientOrderDb = await orderModel
             .find({ email: email })
             .populate("user");
+            console.log("order created")
           res.send({ orderList: clientOrderDb, currentOrder: orderdb });
         } else {
           res.send({ message: "user does not exist" });
@@ -133,8 +135,7 @@ const handleCreateOrder = async (req, res) => {
         deliveryLocation &&
         vat &&
         subTotal &&
-        deliveryCharge &&
-        expoPushToken
+        deliveryCharge 
       ) {
         //check for guest
         const guestExists = await guestModel.findOne({ email: guest.email });
@@ -296,7 +297,7 @@ const initiateDelivery = async (req, res) => {
         const expoPushToken = clientOrder.expoPushToken;
         const clientOrderStatus = clientOrder.orderStatus;
         //now send push notification to client
-        sendPushNotification(
+        clientOrder.expoPushToken && sendPushNotification(
           [expoPushToken],
           "Order Sent,Delivery in progress. click to monitor order in app",
           clientOrderStatus,
