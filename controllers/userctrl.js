@@ -112,8 +112,13 @@ const handleUserCheck = async (req, res) => {
   try {
     if (id) {
       const userDb = await userModel.findById(id);
+      //check for user's order data,if any exists , send by res
       if (userDb) {
-        res.send(userDb);
+        const orderDB = await orderModel.find({email:userDb.email})
+        res.send({
+          data: userDb,
+          orderList: orderDB ? orderDB:[]
+        });
       }
     }
   } catch (error) {

@@ -1,5 +1,7 @@
 const cloudinary = require("../utils/uploadImage");
 const { sendPushNotification } = require("../utils/expo");
+const sendEmail = require("../utils/emailctr");
+const sendSms = require("../utils/smsctr");
 
 //import schemas
 const userModel = require("../database/schemas/user");
@@ -70,7 +72,7 @@ const handleCreateOrder = async (req, res) => {
     deliveryCharge,
     expoPushToken,
   } = req.body;
- 
+
   try {
     if (userType === "registered") {
       if (
@@ -86,9 +88,9 @@ const handleCreateOrder = async (req, res) => {
         email &&
         vat &&
         subTotal &&
-        deliveryCharge 
+        deliveryCharge
       ) {
-        console.log("create order called")
+        console.log("create order called");
         //check for user
         const userExists = await userModel.findById(userID);
         if (userExists) {
@@ -114,7 +116,7 @@ const handleCreateOrder = async (req, res) => {
           const clientOrderDb = await orderModel
             .find({ email: email })
             .populate("user");
-            console.log("order created")
+          console.log("order created");
           res.send({ orderList: clientOrderDb, currentOrder: orderdb });
         } else {
           res.send({ message: "user does not exist" });
@@ -135,7 +137,7 @@ const handleCreateOrder = async (req, res) => {
         deliveryLocation &&
         vat &&
         subTotal &&
-        deliveryCharge 
+        deliveryCharge
       ) {
         //check for guest
         const guestExists = await guestModel.findOne({ email: guest.email });
@@ -226,12 +228,14 @@ const handleUpdateOrderStatus = async (req, res) => {
         const expoPushToken = clientOrder.expoPushToken;
         const clientOrderStatus = clientOrder.orderStatus;
         //now send push notification to client
-        sendPushNotification(
-          [expoPushToken],
-          "Order Delivered. click to monitor order in app",
-          clientOrderStatus,
-          "OrderList"
-        );
+        expoPushToken &&
+          sendPushNotification(
+            [expoPushToken],
+            "Order Delivered. click to monitor order in app",
+            clientOrderStatus,
+            "OrderList"
+          );
+
         //find order Db
         const orderdb = await orderModel.find();
         res.send({ data: orderdb });
@@ -297,12 +301,32 @@ const initiateDelivery = async (req, res) => {
         const expoPushToken = clientOrder.expoPushToken;
         const clientOrderStatus = clientOrder.orderStatus;
         //now send push notification to client
-        clientOrder.expoPushToken && sendPushNotification(
-          [expoPushToken],
-          "Order Sent,Delivery in progress. click to monitor order in app",
-          clientOrderStatus,
-          "OrderList"
-        );
+        expoPushToken &&
+          sendPushNotification(
+            [expoPushToken],
+            "Order Sent,Delivery in progress. click to monitor order in app",
+            clientOrderStatus,
+            "OrderList"
+          );
+
+        //send email to client
+        const clientEmail = clientOrder.email;
+        clientEmail &&
+          sendEmail({
+            to: clientEmail,
+            subject: "Order Enroute",
+            text: "Your order has been fulfilled and is on its way.Refresh orderlist and click on order to access rider details",
+            htm: `<p style={{backgroundColor:"rgb(233,142,30)",color:"white",fontWeight:"bold",padding:"4px"}}>Your order has been fulfilled and is on its way. Refresh orderlist on app or website and click on order to access rider details.Enjoy your meal </p>`,
+          });
+
+        //send sms to client
+        const clientDB = await userModel.findById(clientOrder.user);
+        const clientMobile = clientDB.mobile;
+        clientMobile &&
+          sendSms({
+            to: clientMobile.slice(1),
+            body: "Your order has been fulfilled and is on its way. Refresh orderlist on app or website and click on order to access rider details.Enjoy your meal",
+          });
 
         //find order Db
         const orderdb = await orderModel.find();
