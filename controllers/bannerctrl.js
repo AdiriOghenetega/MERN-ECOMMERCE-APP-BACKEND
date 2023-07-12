@@ -23,7 +23,7 @@ const handleCreateBanner = async(req,res)=>{
         if(id){
             //find user with ID and check if user is an admin
           const isAdmin = await userModel.findById(id)
-          if(isAdmin && (isAdmin.role.toLowerCase() === "admin")){
+          if(isAdmin && (isAdmin.role?.toLowerCase() === "super_admin")){
              if(image){
                 const imageUpload = await cloudinary.uploader.upload(image, {
                     folder: "Hcue",
@@ -41,9 +41,11 @@ const handleCreateBanner = async(req,res)=>{
              }else{
                 res.send({message: "upload failed,no image file recieved"})
              }
+          }else{
+            res.send({message:"Sorry only super admins can perform this action"})
           }
         }else{
-            res.send({message:"only admins can perform this action"})
+            res.send({message:"Sorry only super admins can perform this action"})
         }
     }catch(err){
         console.log(err)

@@ -20,7 +20,8 @@ const userSchema =new mongoose.Schema({
       type:String,
       default:'user'
     },
-    cart: mongoose.Schema.Types.ObjectId
+    cart: mongoose.Schema.Types.ObjectId,
+    location:String
   },{
     timestamps : true
   });

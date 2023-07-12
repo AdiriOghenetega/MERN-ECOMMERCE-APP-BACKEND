@@ -22,7 +22,7 @@ const handleGetOrders = async (req, res) => {
     if (!orderList) {
       res.send({ message: "No Orders listed" });
     } else {
-      //send orderList to client as response
+      //send orderList as response
       res.send({ data: orderList });
       console.log("orders sent");
     }
@@ -216,7 +216,7 @@ const handleUpdateOrderStatus = async (req, res) => {
     if (user_id && order_id) {
       //find user with ID and check if user is an admin
       const isAdmin = await userModel.findById(user_id);
-      if (isAdmin && isAdmin.role.toLowerCase() === "admin") {
+      if (isAdmin && (isAdmin.role.toLowerCase() === "admin" || isAdmin.role?.toLowerCase() === "super_admin")) {
         //find order with id and update status
         await orderModel.findByIdAndUpdate(
           order_id,
@@ -260,7 +260,7 @@ const initiateDelivery = async (req, res) => {
     if (user_id && order_id) {
       //find user with ID and check if user is an admin
       const isAdmin = await userModel.findById(user_id);
-      if (isAdmin && isAdmin.role.toLowerCase() === "admin") {
+      if (isAdmin && (isAdmin.role.toLowerCase() === "admin" || isAdmin.role?.toLowerCase() === "super_admin")) {
         //check if rider already exists
         const riderExists = await riderModel.findOne({
           mobile: mobile.toString(),
@@ -380,7 +380,7 @@ const handleDeleteOne = async (req, res) => {
     if (user_id && order_id) {
       //find user with ID and check if user is an admin
       const isAdmin = await userModel.findById(user_id);
-      if (isAdmin && isAdmin.role.toLowerCase() === "admin") {
+      if (isAdmin && (isAdmin.role.toLowerCase() === "admin" || isAdmin.role?.toLowerCase() === "super_admin")) {
         //find order with id and delete
         await orderModel.findByIdAndDelete(order_id);
 
@@ -404,7 +404,7 @@ const handleDeleteAll = async (req, res) => {
     if (id) {
       //find user with ID and check if user is an admin
       const isAdmin = await userModel.findById(id);
-      if (isAdmin && isAdmin.role.toLowerCase() === "admin") {
+      if (isAdmin && (isAdmin.role.toLowerCase() === "admin" || isAdmin.role?.toLowerCase() === "super_admin")) {
         await orderModel.deleteMany({});
         //find order Db and send
         const orderdb = await orderModel.find();

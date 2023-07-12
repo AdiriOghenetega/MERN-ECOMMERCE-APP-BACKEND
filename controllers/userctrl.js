@@ -127,20 +127,20 @@ const handleUserCheck = async (req, res) => {
 };
 
 const handleChangeRole = async (req, res) => {
-  const { user_email, role } = req.body;
+  const { user_email, role,location } = req.body;
   const { id } = req.params;
   try {
     //check if user is admin
     const user = await userModel.findById(id);
-    if (user && user?.role.toLowerCase() === "admin") {
+    if (user && (user?.role?.toLowerCase() === "super_admin")) {
       //check for second user with email and update
       const secondUser = await userModel.findOneAndUpdate(
         { email: user_email },
-        { role }
+        { role,location }
       );
       res.send({ message: "user role updated" });
     } else {
-      res.send({ message: "you're not authorized" });
+      res.send({ message: "you're not authorized,only super admins can perform this action" });
     }
   } catch (error) {
     console.log(error);

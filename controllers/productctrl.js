@@ -13,7 +13,7 @@ const handleProductUpload = async (req, res) => {
 
       //find user with ID and check if user is an admin
       const isAdmin = await userModel.findById(id);
-      if (isAdmin && isAdmin.role.toLowerCase() === "admin") {
+      if (isAdmin && (isAdmin.role?.toLowerCase() === "super_admin")) {
         const exists = await productModel.findOne({ name: name });
         if (exists) {
           res.send({ message: "Product Already Listed" });
@@ -38,7 +38,7 @@ const handleProductUpload = async (req, res) => {
           }
         }
       } else {
-        res.send({ message: "only admins can perform this action" });
+        res.send({ message: "Sorry only super admins can perform this action" });
       }
     }else{
       res.send({ message: "only admins can perform this action" });
@@ -67,7 +67,7 @@ const handleTurnOffProduct = async (req, res) => {
     if(id){
       //find user with ID and check if user is an admin
       const isAdmin = await userModel.findById(id);
-      if (isAdmin && isAdmin.role.toLowerCase() === "admin") {
+      if (isAdmin && (isAdmin.role.toLowerCase() === "admin" || isAdmin.role?.toLowerCase() === "super_admin")) {
         if (location && products) {
           products.forEach(async (el) => {
             const product = await productModel.findById(el.value);
@@ -104,7 +104,7 @@ const handleTurnOnProduct = async (req, res) => {
     if(id){
       //find user with ID and check if user is an admin
       const isAdmin = await userModel.findById(id);
-      if (isAdmin && isAdmin.role.toLowerCase() === "admin") {
+      if (isAdmin && (isAdmin.role.toLowerCase() === "admin" || isAdmin.role?.toLowerCase() === "super_admin")) {
         if (location && products) {
           products.forEach(async (el) => {
             const product = await productModel.findById(el.value);
@@ -137,7 +137,7 @@ const handleProductDelete = async (req, res) => {
     if(id){
       //check if user is admin
       const isAdmin = await userModel.findById(id);
-      if (isAdmin && isAdmin.role.toLowerCase() === "admin") {
+      if (isAdmin && (isAdmin.role?.toLowerCase() === "super_admin")) {
         //loop through data ,find by id and delete
         if (body) {
           body.forEach(async (elem) => {
@@ -148,7 +148,7 @@ const handleProductDelete = async (req, res) => {
           res.send({ data: productdb });
         }
       } else {
-        res.send({ message: "only admins can perform this action" });
+        res.send({ message: "Sorry only super admins can perform this action" });
       }
 
     }else{
