@@ -362,6 +362,20 @@ const handleOrderPaymentStatus = async (req, res) => {
         }
       );
 
+       //find order with id and retrieve expoPushToken
+        const clientOrder = await orderModel.findOne({ transactionReference: transactionReference });
+        const expoPushToken = clientOrder.expoPushToken;
+        const clientPaymentStatus = clientOrder.paymentStatus;
+        //now send push notification to client
+        expoPushToken &&
+          sendPushNotification(
+            [expoPushToken],
+            "Order Placed. Order status pending",
+            clientPaymentStatus,
+            "OrderList"
+          );
+
+
       //find order Db
       const orderdb = await orderModel.find();
       res.send({ data: orderdb });
