@@ -320,8 +320,9 @@ const initiateDelivery = async (req, res) => {
           });
 
         //send sms to client
-        const clientDB =clientOrder?.user ?  await userModel.findById(clientOrder?.user):await guestModel.findById(clientOrder?.user)
-        const clientMobile = clientDB?.mobile;
+        const clientDB = await userModel.findById(clientOrder?.user)
+        const guestDB = await guestModel.findById(clientOrder?.user)
+        const clientMobile = clientDB?.mobile ? clientDB?.mobile:guestDB?.mobile
         clientMobile &&
           sendSms({
             to: clientMobile.slice(1),
