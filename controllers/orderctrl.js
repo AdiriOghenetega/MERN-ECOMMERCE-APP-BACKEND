@@ -310,7 +310,7 @@ const initiateDelivery = async (req, res) => {
           );
 
         //send email to client
-        const clientEmail = clientOrder.email;
+        const clientEmail = clientOrder?.email;
         clientEmail &&
           sendEmail({
             to: clientEmail,
@@ -320,8 +320,8 @@ const initiateDelivery = async (req, res) => {
           });
 
         //send sms to client
-        const clientDB = await userModel.findById(clientOrder.user);
-        const clientMobile = clientDB.mobile;
+        const clientDB =clientOrder?.user ?  await userModel.findById(clientOrder?.user):await guestModel.findById(clientOrder?.user)
+        const clientMobile = clientDB?.mobile;
         clientMobile &&
           sendSms({
             to: clientMobile.slice(1),
